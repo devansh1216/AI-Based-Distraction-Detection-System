@@ -9,15 +9,18 @@ from sqlalchemy import (
     BigInteger,
     DateTime,
     ForeignKey,
-    Identity,
     Index,
+    Integer,
     Numeric,
+    Enum,
     String,
     text,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base
+
+from app.enums.detection import BehaviourType
 
 
 class DetectionEvent(Base):
@@ -31,8 +34,7 @@ class DetectionEvent(Base):
     )
 
     id: Mapped[int] = mapped_column(
-        BigInteger,
-        Identity(),
+        BigInteger().with_variant(Integer, "sqlite"),
         primary_key=True,
     )
 
@@ -56,7 +58,10 @@ class DetectionEvent(Base):
     )
 
     behaviour_type: Mapped[str] = mapped_column(
-        String(30),
+        Enum(
+            BehaviourType,
+            name="behaviour_type",
+        ),
         nullable=False,
     )
 

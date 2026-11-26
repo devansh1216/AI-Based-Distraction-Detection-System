@@ -8,8 +8,9 @@ from sqlalchemy import (
     BigInteger,
     DateTime,
     ForeignKey,
-    Identity,
     Index,
+    Integer,
+    Enum,
     String,
     text,
 )
@@ -17,13 +18,14 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base
 
+from app.enums.report import ReportStatus
+
 
 class Report(Base):
     __tablename__ = "reports"
 
     id: Mapped[int] = mapped_column(
-        BigInteger,
-        Identity(),
+        BigInteger().with_variant(Integer, "sqlite"),
         primary_key=True,
     )
 
@@ -48,7 +50,10 @@ class Report(Base):
     )
 
     report_status: Mapped[str] = mapped_column(
-        String(20),
+        Enum(
+            ReportStatus,
+            name="report_status",
+        ),
         nullable=False,
         server_default=text("'PENDING'"),
     )

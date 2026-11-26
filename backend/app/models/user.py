@@ -6,16 +6,20 @@ from datetime import datetime
 
 from sqlalchemy import (
     BigInteger,
+    BigInteger,
     Boolean,
     DateTime,
-    Identity,
     Index,
+    Integer,
     String,
     text,
+    Enum,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base
+
+from app.enums.user import UserRole
 
 
 class User(Base):
@@ -28,8 +32,7 @@ class User(Base):
     )
 
     id: Mapped[int] = mapped_column(
-        BigInteger,
-        Identity(),
+        BigInteger().with_variant(Integer, "sqlite"),
         primary_key=True,
     )
 
@@ -49,8 +52,11 @@ class User(Base):
         nullable=False,
     )
 
-    role: Mapped[str] = mapped_column(
-        String(20),
+    role: Mapped[UserRole] = mapped_column(
+        Enum(
+            UserRole,
+            name="user_role",
+        ),
         nullable=False,
     )
 

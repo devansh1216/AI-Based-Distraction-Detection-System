@@ -9,8 +9,8 @@ from sqlalchemy import (
     Boolean,
     DateTime,
     ForeignKey,
-    Identity,
     Index,
+    Integer,
     SmallInteger,
     String,
     text,
@@ -31,8 +31,7 @@ class Camera(Base):
     )
 
     id: Mapped[int] = mapped_column(
-        BigInteger,
-        Identity(),
+        BigInteger().with_variant(Integer, "sqlite"),
         primary_key=True,
     )
 

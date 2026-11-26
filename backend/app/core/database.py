@@ -11,23 +11,28 @@ from sqlalchemy.orm import sessionmaker
 # Load environment variables
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL environment variable is not set.")
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "sqlite:///./distraction.db",
+)
 
 # SQLAlchemy Engine
-engine = create_engine(
-    DATABASE_URL,
-    pool_pre_ping=True,
-    future = True,
-)
+engine_options = {
+    "pool_pre_ping": True,
+    "future": True,
+}
+
+if DATABASE_URL.startswith("sqlite"):
+    engine_options["connect_args"] = {"check_same_thread": False}
+
+engine = create_engine(DATABASE_URL, **engine_options)
 
 # Session Factory
 SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
     bind=engine,
+    expire_on_commit=False,
     future = True,
 )
 

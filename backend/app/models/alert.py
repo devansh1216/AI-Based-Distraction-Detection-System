@@ -8,14 +8,21 @@ from sqlalchemy import (
     BigInteger,
     DateTime,
     ForeignKey,
-    Identity,
     Index,
+    Integer,
+    Enum,
     String,
     text,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base
+
+from app.enums.alert import (
+    AlertSeverity,
+    AlertStatus,
+    AlertType,
+)
 
 
 class Alert(Base):
@@ -30,8 +37,7 @@ class Alert(Base):
     )
 
     id: Mapped[int] = mapped_column(
-        BigInteger,
-        Identity(),
+        BigInteger().with_variant(Integer, "sqlite"),
         primary_key=True,
     )
 
@@ -50,17 +56,26 @@ class Alert(Base):
     )
 
     alert_type: Mapped[str] = mapped_column(
-        String(30),
+        Enum(
+            AlertType,
+            name="alert_type",
+        ),
         nullable=False,
     )
 
     severity: Mapped[str] = mapped_column(
-        String(20),
+        Enum(
+            AlertSeverity,
+            name="alert_severity",
+        ),
         nullable=False,
     )
 
     status: Mapped[str] = mapped_column(
-        String(20),
+        Enum(
+            AlertStatus,
+            name="alert_status",
+        ),
         nullable=False,
         server_default=text("'ACTIVE'"),
     )

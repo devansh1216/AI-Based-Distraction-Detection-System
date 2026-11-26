@@ -8,15 +8,22 @@ from sqlalchemy import (
     BigInteger,
     DateTime,
     ForeignKey,
-    Identity,
     Index,
     Integer,
+    Integer,
+    Enum,
     String,
     text,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base
+
+from app.enums.monitoring import (
+    ReportStatus,
+    SessionStatus,
+)
+
 
 
 class MonitoringSession(Base):
@@ -31,8 +38,7 @@ class MonitoringSession(Base):
     )
 
     id: Mapped[int] = mapped_column(
-        BigInteger,
-        Identity(),
+        BigInteger().with_variant(Integer, "sqlite"),
         primary_key=True,
     )
 
@@ -64,13 +70,19 @@ class MonitoringSession(Base):
     )
 
     session_status: Mapped[str] = mapped_column(
-        String(20),
+        Enum(
+            SessionStatus,
+            name="session_status",
+        ),
         nullable=False,
         server_default=text("'ACTIVE'"),
     )
 
     report_status: Mapped[str] = mapped_column(
-        String(20),
+        Enum(
+            ReportStatus,
+            name="report_status",
+        ),
         nullable=False,
         server_default=text("'PENDING'"),
     )

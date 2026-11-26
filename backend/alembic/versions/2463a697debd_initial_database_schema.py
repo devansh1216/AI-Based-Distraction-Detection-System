@@ -1,8 +1,8 @@
-"""initial_schema
+"""initial_database_schema
 
-Revision ID: ff114137d16c
+Revision ID: 2463a697debd
 Revises: 
-Create Date: 2026-07-06 12:20:36.774159
+Create Date: 2026-07-08 00:34:32.154663
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'ff114137d16c'
+revision: str = '2463a697debd'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -42,7 +42,7 @@ def upgrade() -> None:
     sa.Column('full_name', sa.String(length=100), nullable=False),
     sa.Column('email', sa.String(length=255), nullable=False),
     sa.Column('password_hash', sa.String(length=255), nullable=False),
-    sa.Column('role', sa.String(length=20), nullable=False),
+    sa.Column('role', sa.Enum('ADMINISTRATOR', 'TEACHER', name='user_role'), nullable=False),
     sa.Column('is_active', sa.Boolean(), server_default=sa.text('true'), nullable=False),
     sa.Column('last_login_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
@@ -89,8 +89,8 @@ def upgrade() -> None:
     sa.Column('user_id', sa.BigInteger(), nullable=False),
     sa.Column('classroom_id', sa.BigInteger(), nullable=False),
     sa.Column('camera_id', sa.BigInteger(), nullable=False),
-    sa.Column('session_status', sa.String(length=20), server_default=sa.text("'ACTIVE'"), nullable=False),
-    sa.Column('report_status', sa.String(length=20), server_default=sa.text("'PENDING'"), nullable=False),
+    sa.Column('session_status', sa.Enum('ACTIVE', 'FINALIZING', 'COMPLETED', 'FAILED', name='session_status'), server_default=sa.text("'ACTIVE'"), nullable=False),
+    sa.Column('report_status', sa.Enum('PENDING', 'GENERATING', 'READY', 'FAILED', name='report_status'), server_default=sa.text("'PENDING'"), nullable=False),
     sa.Column('total_events', sa.Integer(), server_default=sa.text('0'), nullable=False),
     sa.Column('total_alerts', sa.Integer(), server_default=sa.text('0'), nullable=False),
     sa.Column('started_at', sa.DateTime(timezone=True), nullable=False),
@@ -111,9 +111,9 @@ def upgrade() -> None:
     sa.Column('id', sa.BigInteger(), sa.Identity(always=False), nullable=False),
     sa.Column('session_id', sa.BigInteger(), nullable=False),
     sa.Column('tracking_id', sa.String(length=30), nullable=False),
-    sa.Column('alert_type', sa.String(length=30), nullable=False),
-    sa.Column('severity', sa.String(length=20), nullable=False),
-    sa.Column('status', sa.String(length=20), server_default=sa.text("'ACTIVE'"), nullable=False),
+    sa.Column('alert_type', sa.Enum('LOOKING_AWAY', 'HEAD_DOWN', 'PEER_CONVERSATION', name='alert_type'), nullable=False),
+    sa.Column('severity', sa.Enum('LOW', 'MEDIUM', 'HIGH', name='alert_severity'), nullable=False),
+    sa.Column('status', sa.Enum('ACTIVE', 'ACKNOWLEDGED', 'DISMISSED', name='alert_status'), server_default=sa.text("'ACTIVE'"), nullable=False),
     sa.Column('generated_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('acknowledged_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
@@ -130,7 +130,7 @@ def upgrade() -> None:
     sa.Column('session_id', sa.BigInteger(), nullable=False),
     sa.Column('tracking_id', sa.String(length=30), nullable=False),
     sa.Column('representative_thumbnail', sa.String(length=255), nullable=True),
-    sa.Column('behaviour_type', sa.String(length=30), nullable=False),
+    sa.Column('behaviour_type', sa.Enum('LOOKING_AWAY', 'HEAD_DOWN', 'PEER_CONVERSATION', name='behaviour_type'), nullable=False),
     sa.Column('confidence_score', sa.Numeric(precision=4, scale=3), nullable=False),
     sa.Column('event_timestamp', sa.DateTime(timezone=True), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
@@ -146,7 +146,7 @@ def upgrade() -> None:
     sa.Column('session_id', sa.BigInteger(), nullable=False),
     sa.Column('report_name', sa.String(length=150), nullable=False),
     sa.Column('report_path', sa.String(length=255), nullable=False),
-    sa.Column('report_status', sa.String(length=20), server_default=sa.text("'PENDING'"), nullable=False),
+    sa.Column('report_status', sa.Enum('PENDING', 'GENERATING', 'READY', 'FAILED', name='report_status'), server_default=sa.text("'PENDING'"), nullable=False),
     sa.Column('generated_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
     sa.ForeignKeyConstraint(['session_id'], ['monitoring_sessions.id'], name=op.f('fk_reports_session_id_monitoring_sessions'), ondelete='RESTRICT'),

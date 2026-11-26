@@ -8,8 +8,8 @@ from sqlalchemy import (
     BigInteger,
     DateTime,
     ForeignKey,
-    Identity,
     Index,
+    Integer,
     String,
     Text,
     text,
@@ -23,8 +23,7 @@ class AuditLog(Base):
     __tablename__ = "audit_logs"
 
     id: Mapped[int] = mapped_column(
-        BigInteger,
-        Identity(),
+        BigInteger().with_variant(Integer, "sqlite"),
         primary_key=True,
     )
 

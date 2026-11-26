@@ -8,8 +8,8 @@ from sqlalchemy import (
     BigInteger,
     Boolean,
     DateTime,
-    Identity,
     Index,
+    Integer,
     SmallInteger,
     String,
     text,
@@ -29,8 +29,7 @@ class Classroom(Base):
     )
 
     id: Mapped[int] = mapped_column(
-        BigInteger,
-        Identity(),
+        BigInteger().with_variant(Integer, "sqlite"),
         primary_key=True,
     )
 

@@ -19,7 +19,7 @@ from app.db import base
 config = context.config
 
 # Set DATABASE_URL from .env
-database_url = os.getenv("DATABASE_URL")
+database_url = os.getenv("DATABASE_URL", "sqlite:///./distraction.db")
 config.set_main_option(
     "sqlalchemy.url",
     database_url.replace("%", "%%"),

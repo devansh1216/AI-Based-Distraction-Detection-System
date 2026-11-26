@@ -1,0 +1,7 @@
+.DS_Store
+backend/.env
+backend/distraction.db
+backend/__pycache__/
+**/__pycache__/
+*.py[cod]
+.venv/
